@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mail, Lock, ArrowRight, Brain, Sparkles, CheckCircle2, AlertCircle, User } from 'lucide-react';
+import { redirect,replace,useNavigate } from 'react-router-dom';
 
 /**
  * AnimatedBackground Component
@@ -124,8 +125,25 @@ const AuthCard = () => {
     e.preventDefault();
     setIsLoading(true);
     setStatus(null);
+    // console.log(e.target.value);
+    // Simulate API call
+    console.log(name,email,password)
+    const data={name:name,email:email,password:password}
+
 
     // Simulate API call
+    try{
+      const res = fetch("http://localhost:3000/user/signup",{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    }catch(err){
+      console.log("error:",err)
+    }
+    
     setTimeout(() => {
       setIsLoading(false);
       // Simple validation for demo
@@ -137,6 +155,8 @@ const AuthCard = () => {
         setStatus('error');
       }
     }, 1500);
+    console.log("data fetched")
+    useNavigate("/profile",{replace:true});
   };
 
   return (

@@ -3,14 +3,14 @@ import cors from 'cors'
 import { configDotenv } from 'dotenv';
 import authRoute from './routes/authRoute.js';
 import mongoose from 'mongoose';
-
+import cookieParser from 'cookie-parser';
 
 const app=express();
 configDotenv();
 
 app.use(cors())
 app.use(express.json())
-
+app.use(cookieParser())
 app.use("/user",authRoute)
 
 mongoose.connect(process.env.MONGO_DB_URI,{dbName:"LearnFlex"})

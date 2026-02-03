@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mail, Lock, ArrowRight, Brain, Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
+import { redirect } from 'react-router-dom';
 
 /**
  * AnimatedBackground Component
@@ -123,8 +124,15 @@ const LoginCard = () => {
     e.preventDefault();
     setIsLoading(true);
     setStatus(null);
-
+    const data={email:e.email,password:e.password}
     // Simulate API call
+    const res = fetch("/user/login",{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
     setTimeout(() => {
       setIsLoading(false);
       if (email && password.length > 5) {
@@ -133,6 +141,7 @@ const LoginCard = () => {
         setStatus('error');
       }
     }, 1500);
+    redirect("./profile")
   };
 
   return (

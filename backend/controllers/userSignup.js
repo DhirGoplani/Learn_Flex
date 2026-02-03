@@ -1,5 +1,6 @@
 import User from "../models/user.js";
 import bcrypt from 'bcrypt'
+import { getToken } from "../util/generateToken.js";
 const userSignUp= async (req,res)=>{
     try {
     const { name, email, password } = req.body;
@@ -9,7 +10,15 @@ const userSignUp= async (req,res)=>{
     const hashedPassword = await bcrypt.hash(password,process.env.HASHING_SALT);
     const user = await User.create({ name, email, password:hashedPassword });
 
-    res.json({
+    const token=getToken(user._id)
+       res.cookie("token", token, {
+        httpOnly: true,       
+        secure: true,       
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+
+        res.json({
       _id: user._id,
       name: user.name,
       email: user.email

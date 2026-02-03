@@ -2,6 +2,7 @@ import express, { json } from 'express'
 import cors from 'cors'
 import { configDotenv } from 'dotenv';
 import authRoute from './routes/authRoute.js';
+import leaderRoutes from './routes/leaderBoardRoute.js';
 import mongoose from 'mongoose';
 
 
@@ -12,7 +13,7 @@ app.use(cors())
 app.use(express.json())
 
 app.use("/user",authRoute)
-
+app.use("/leaderboard",leaderRoutes)
 mongoose.connect(process.env.MONGO_DB_URI,{dbName:"LearnFlex"})
 .then(() => console.log("MongoDB Connected"))
 .catch(err => console.log(err));

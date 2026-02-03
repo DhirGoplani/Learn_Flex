@@ -22,6 +22,14 @@ const UserSchema = new mongoose.Schema({
     streak:{
         type:Number,
         default:0
+    },
+    rating:{
+        type:Number,
+        default:0,
+    },
+    country:{
+        type:String,
+        default:India,
     }
 },
 {

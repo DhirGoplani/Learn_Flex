@@ -8,7 +8,7 @@ authRoute.get("/",(req,res)=>{
     res.send("from auth router")
 })
 
-authRoute.get("/signup",userSignUp);
-authRoute.get("/login",userLogin);
+authRoute.post("/signup",userSignUp);
+authRoute.post("/login",userLogin);
 
 export default authRoute;

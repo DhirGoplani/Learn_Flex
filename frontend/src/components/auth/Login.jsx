@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mail, Lock, ArrowRight, Brain, Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
-import { redirect } from 'react-router-dom';
+import { redirect ,useNavigate} from 'react-router-dom';
 
 /**
  * AnimatedBackground Component
  * Renders a canvas with floating quiz-related symbols that drift and react to mouse movement.
  */
 const AnimatedBackground = () => {
+  const navigate=useNavigate();
   const canvasRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
@@ -125,7 +126,7 @@ const LoginCard = () => {
     setIsLoading(true);
     setStatus(null);
     const data={email:e.email,password:e.password}
-    // Simulate API call
+    
     const res = fetch("/user/login",{
       method: 'POST',
       headers: {
@@ -141,7 +142,7 @@ const LoginCard = () => {
         setStatus('error');
       }
     }, 1500);
-    redirect("./profile")
+    navigate("/profile")
   };
 
   return (

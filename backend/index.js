@@ -9,7 +9,12 @@ import cookieParser from 'cookie-parser';
 const app=express();
 configDotenv();
 
-app.use(cors())
+app.use(cors(
+    {
+  origin: "http://localhost:5173", 
+  credentials: true               
+}
+));
 app.use(express.json())
 app.use(cookieParser())
 
@@ -19,6 +24,7 @@ app.use("/api",leaderRoutes)
 mongoose.connect(process.env.MONGO_DB_URI,{dbName:"LearnFlex"})
 .then(() => console.log("MongoDB Connected"))
 .catch(err => console.log(err));
+
 
 
 app.get("/",(req,res,next)=>{

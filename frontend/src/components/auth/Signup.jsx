@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mail, Lock, ArrowRight, Brain, Sparkles, CheckCircle2, AlertCircle, User } from 'lucide-react';
-import { redirect,replace,useNavigate } from 'react-router-dom';
+import { redirect, replace, useNavigate } from 'react-router-dom';
 
 /**
  * AnimatedBackground Component
  * Renders a canvas with floating quiz-related symbols that drift and react to mouse movement.
  */
 const AnimatedBackground = () => {
+
   const canvasRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
@@ -75,7 +76,7 @@ const AnimatedBackground = () => {
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
+
       // Create a subtle gradient background
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
       gradient.addColorStop(0, '#0f172a'); // Slate 900
@@ -102,8 +103,8 @@ const AnimatedBackground = () => {
   }, []);
 
   return (
-    <canvas 
-      ref={canvasRef} 
+    <canvas
+      ref={canvasRef}
       className="fixed top-0 left-0 w-full h-full -z-10"
     />
   );
@@ -114,6 +115,7 @@ const AnimatedBackground = () => {
  * Handles Signup form with glassmorphism effects.
  */
 const AuthCard = () => {
+  const navigate = useNavigate()
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -127,23 +129,24 @@ const AuthCard = () => {
     setStatus(null);
     // console.log(e.target.value);
     // Simulate API call
-    console.log(name,email,password)
-    const data={name:name,email:email,password:password}
+    console.log(name, email, password)
+    const data = { name: name, email: email, password: password }
 
 
     // Simulate API call
-    try{
-      const res = fetch("http://localhost:3000/user/signup",{
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-    }catch(err){
-      console.log("error:",err)
+    try {
+      const res = fetch("http://localhost:3000/user/signup", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      })
+      const resData = (await res).json();
+      console.log(resData);
+    } catch (err) {
+      console.log("error:", err)
     }
-    
+
     setTimeout(() => {
       setIsLoading(false);
       // Simple validation for demo
@@ -156,16 +159,16 @@ const AuthCard = () => {
       }
     }, 1500);
     console.log("data fetched")
-    useNavigate("/profile",{replace:true});
+    navigate("/profile")
   };
 
   return (
     <div className="w-full max-w-md p-1 relative z-10 mx-4">
       {/* Glow effect behind the card */}
       <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 rounded-3xl blur-xl opacity-50 animate-pulse"></div>
-      
+
       <div className="relative bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden transition-all duration-500">
-        
+
         {/* Header Section */}
         <div className="px-8 pt-8 pb-6 text-center">
           <div className="mx-auto w-16 h-16 bg-gradient-to-tr from-violet-500 to-fuchsia-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg transform rotate-3 hover:rotate-6 transition-transform duration-300">
@@ -179,7 +182,7 @@ const AuthCard = () => {
 
         {/* Form Section */}
         <form onSubmit={handleSubmit} className="px-8 pb-8 space-y-5">
-          
+
           {/* Name Input */}
           <div className="space-y-2 animate-fadeIn">
             <label className="text-xs font-medium text-slate-300 uppercase tracking-wider ml-1">
@@ -292,7 +295,7 @@ const AuthCard = () => {
           {/* Already have an account link */}
           <p className="text-center text-slate-500 text-sm mt-4">
             Already have an account?{' '}
-            <a 
+            <a
               href="/login"
               className="text-violet-400 font-medium hover:text-violet-300 hover:underline transition-all"
             >
@@ -317,7 +320,7 @@ export default function Signup() {
     <div className="relative min-h-screen w-full overflow-hidden font-sans flex items-center justify-center selection:bg-violet-500/30">
       <AnimatedBackground />
       <AuthCard />
-      
+
       {/* Additional interactive decorative elements */}
       <div className="absolute bottom-4 right-4 text-slate-600/30 text-xs flex items-center gap-1 select-none pointer-events-none">
         <Sparkles className="w-3 h-3" />

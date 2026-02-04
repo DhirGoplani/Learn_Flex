@@ -1,19 +1,28 @@
-import React,{useEffect} from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
-
+import App from './Page'
 function Profile() {
-    const {userDetail,setUserDetail}=useState("Loading")
-    useEffect(async ()=>{
+  const [ userDetail, setUserDetail ] = useState("Loading")
+  useEffect(() => {
+    const dataFetch = async () => {
+      try {
         console.log("isnerted")
-        const data=fetch("/user/profile",{
-             credentials: "include"
+        const data = await fetch("http://localhost:3000/user/profile", {
+          credentials: "include"
         })
-        console.log(data)
-        setUserDetail(data)
-    },[])
+        const res=await data.json();
+        console.log(res)
+        setUserDetail(res)
+      } catch (err) {
+        console.log(err)
+      }
+
+    }
+    dataFetch();
+  }, [])
   return (
     <div>
-      {userDetail}
+      <App user={userDetail} />
     </div>
   )
 }

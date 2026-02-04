@@ -11,7 +11,7 @@ const userLogin = async (req,res)=>{
         const isMatch = await bcyrpt.compare(password,user.password);
         if (!isMatch) return res.status(400).json({ msg: "Wrong password" });
         const token=getToken(user._id)
-       res.cookie("token", token, {
+       res.cookies("token", token, {
         httpOnly: true,       
         secure: true,       
         sameSite: "lax",
@@ -21,7 +21,8 @@ const userLogin = async (req,res)=>{
         res.json({
       _id: user._id,
       name: user.name,
-      email: user.email
+      email: user.email,
+      
     });
     }catch(err){
          res.status(500).json({ error: err.message });

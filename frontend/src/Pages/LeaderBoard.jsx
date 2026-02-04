@@ -21,7 +21,7 @@ const LeaderBoard = () => {
 
   const fetchLeaderBoardData= async () => {
     try{
-      const response=await axios.get()
+      const response = await axios.get("http://localhost:3000/api/leaderboard");
       if(!response){
         console.log(error)
       }

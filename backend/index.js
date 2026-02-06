@@ -17,10 +17,9 @@ app.use(cors(
 ));
 app.use(express.json())
 app.use(cookieParser())
+
 app.use("/user",authRoute)
-app.use("/leaderboard",leaderRoutes)
-
-
+app.use("/api",leaderRoutes)
 
 mongoose.connect(process.env.MONGO_DB_URI,{dbName:"LearnFlex"})
 .then(() => console.log("MongoDB Connected"))

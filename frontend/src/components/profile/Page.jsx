@@ -212,7 +212,10 @@ const SettingsPanel = ({ isOpen, onClose }) => {
 const Dashboard = ({user}) => {
   const [showSettings, setShowSettings] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
-
+  const [names,setName]=useState(user.name)
+  useEffect(()=>{
+      if(user.name)setName(user.name.split(" ")[0][0])
+  },user.name)
   // Mock User Data
 //   const user = {
 //     name: "Alex Johnson",
@@ -251,7 +254,7 @@ const Dashboard = ({user}) => {
             <Settings className="w-6 h-6" />
           </button>
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 border-2 border-slate-800 flex items-center justify-center text-white font-bold text-sm shadow-lg">
-            {user.name[0]}
+            {names}
           </div>
         </div>
       </nav>

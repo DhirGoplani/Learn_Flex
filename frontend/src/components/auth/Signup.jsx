@@ -128,12 +128,12 @@ const AuthCard = () => {
     setIsLoading(true);
     setStatus(null);
     // console.log(e.target.value);
-    // Simulate API call
+    
     console.log(name, email, password)
     const data = { name: name, email: email, password: password }
 
 
-    // Simulate API call
+    
     try {
       const res = fetch("http://localhost:3000/user/signup", {
         method: "POST",

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mail, Lock, ArrowRight, Brain, Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
 import { redirect ,useNavigate} from 'react-router-dom';
-
+// import { useNavigate } from 'react-router-dom';
 /**
  * AnimatedBackground Component
  * Renders a canvas with floating quiz-related symbols that drift and react to mouse movement.
@@ -114,7 +114,9 @@ const AnimatedBackground = () => {
  * LoginCard Component
  * The main form UI with glassmorphism effects.
  */
+
 const LoginCard = () => {
+  const navigate=useNavigate()
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -125,24 +127,42 @@ const LoginCard = () => {
     e.preventDefault();
     setIsLoading(true);
     setStatus(null);
-    const data={email:e.email,password:e.password}
+    const data = {  email: email, password: password }
     
-    const res = fetch("/user/login",{
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-    setTimeout(() => {
-      setIsLoading(false);
-      if (email && password.length > 5) {
-        setStatus('success');
-      } else {
-        setStatus('error');
+    try {
+      const res = await fetch("http://localhost:3000/user/login", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      })
+      const resData = await res.json();
+      console.log(resData.msg)
+    //   setTimeout(() => {
+    //   setIsLoading(false);
+    //   if (email && password.length > 5) {
+    //     setStatus('success');
+    //   } else {
+    //     setStatus('error');
+    //   }
+    // }, 1500);
+      if(resData.msg==="Invalid email" || resData.msg==="Wrong password"){
+        
+        setTimeout(()=>{
+          setIsLoading(false)
+          setStatus('error')
+        },1500)
+        setStatus('')
+        
+      }else{
+        navigate("/profile")
       }
-    }, 1500);
-    navigate("/profile")
+      
+    } catch (err) {
+      console.log("error:", err)
+    }
+    
+    
   };
 
   return (

@@ -126,7 +126,7 @@ return (
               </div>
               <h3 className="text-2xl sm:text-3xl font-bold text-[#001F3F] mb-2">Daily Challenge</h3>
               <p className="text-slate-500 text-sm sm:text-base mb-6 sm:mb-8 max-w-[220px] sm:max-w-[250px]">
-                10 high-impact questions to keep your {selectedExam} prep sharp.
+               High-impact questions to keep your {selectedExam} prep sharp.
               </p>
             </div>
  

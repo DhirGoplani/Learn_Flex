@@ -1,131 +1,110 @@
-# 🚀 Learn Flex
+# LearnFlex
 
-**Learn Flex** is a high-performance, AI-driven learning platform designed to help students master competitive exams with precision. Combining real-time competitive features, personalized AI assistance, and comprehensive progress tracking, Learn Flex makes exam preparation interactive, engaging, and data-driven.
+**Live Demo:** [https://learn-flex-yw72.vercel.app/HomePage](https://learn-flex-yw72.vercel.app/HomePage?utm_source=chatgpt.com)
 
----
+A full-stack, real-time competitive exam learning platform for **JEE, NEET, UPSC**, and other foundation competitive exams. LearnFlex unifies personalized practice, scheduled mock tests, deterministic daily challenges, and live 1v1 peer quiz battles into a single adaptive, gamified platform.
 
-## 🌟 Key Features
+## ✨ Key Features
 
-### 🧠 AI-Powered Learning
-- **Personalized Assistance**: Integration with Google Gemini AI to provide context-aware explanations and study tips.
-- **Dynamic Question Generation**: Intelligent question sets tailored to user performance levels.
+* **Multi-Exam Support with Custom Marking Rules** — JEE/NEET use `+4 / -1` scoring, UPSC uses `+1 / -0.33` or `+2 / -0.66`, all enforced dynamically at runtime via an `Exam_Marking` table.
 
-### ⚔️ Real-Time 1v1 Competition
-- **Battle Mode**: Challenge peers in real-time quiz battles using Socket.io integration.
-- **Instant Feedback**: See live progress and final scores as you compete.
+* **Deterministic Daily Challenge** — A seeded Linear Congruential Generator (LCG) produces identical daily question sets for every user of a given exam, with zero manual pre-allocation.
 
-### 📊 Comprehensive Exam Prep
-- **Practice Mode**: Focused practice sessions for major exams like NEET, with detailed performance breakdowns.
-- **Weekly Quizzes**: Structured weekly assessments to test retention and speed.
-- **Daily Challenges**: Consistency-building daily tasks to keep learners on track.
+* **Real-Time 1v1 Quiz Battles** — Low-latency WebSocket matchmaking (Socket.io) with synchronized rooms, live question distribution, and instant comparative grading.
 
-### 📈 Progress & Analytics
-- **Activity Heatmaps**: Visual representation of your daily consistency and study streaks.
-- **Global Leaderboard**: Track your rank against learners worldwide in real-time.
-- **Detailed Profiles**: Manage your stats, achievements, and exam history.
+* **Relational Analytics & Leaderboards** — Real-time rankings via SQL CTEs and window functions (`RANK() OVER (...)`), plus an activity heatmap for study streaks.
 
----
+* **Weekly Mock Tests** — Scheduled, transactional quiz submissions with atomic batch inserts.
 
-## 🛠️ Tech Stack
+* **Secure Auth** — JWT sessions in HttpOnly cookies, BCrypt password hashing, and a database-backed sliding-window OTP rate limiter.
 
-### Frontend
-- **Framework**: React 19 + Vite (for ultra-fast development and optimized builds)
-- **Styling**: Tailwind CSS 4.0 (modern, utility-first design)
-- **State Management**: React Router 7 (for advanced routing)
-- **Real-time**: Socket.io-client
-- **Visuals**: Framer Motion (animations), Lucide React (icons), React Heatmap
+## 🏗️ Architecture
 
-### Backend
-- **Core**: Node.js + Express 5
-- **Databases**: 
-  - **PostgreSQL**: Hosted on Neon for relational data and stability.
-  - **MongoDB**: For flexible document-based data storage.
-- **AI**: Google Generative AI (@google/genai)
-- **Communication**: Socket.io (real-time events), Nodemailer (email services)
-- **Utilities**: Node-cron (scheduled tasks), Sharp (image processing), PDF-parse
-
----
-
-## 🚦 Getting Started
-
-### Prerequisites
-- [Node.js](https://nodejs.org/) (v18+ recommended)
-- [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) or local MongoDB
-- [Neon PostgreSQL](https://neon.tech/) account
-- [Google AI Studio API Key](https://aistudio.google.com/) (for Gemini features)
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/DhirGoplani/Learn_Flex.git
-   cd Learn_Flex
-   ```
-
-2. **Frontend Setup**
-   ```bash
-   cd frontend
-   npm install
-   ```
-   Create a `.env` file in `frontend/`:
-   ```env
-   VITE_API_BASE_URL=http://localhost:3000
-   ```
-
-3. **Backend Setup**
-   ```bash
-   cd ../backend
-   npm install
-   ```
-   Create a `.env` file in `backend/`:
-   ```env
-   PORT=3000
-   DATABASE_URL=your_neon_postgresql_url
-   MONGO_URI=your_mongodb_uri
-   JWT_SECRET=your_secret_key
-   GEMINI_API_KEY=your_google_ai_key
-   EMAIL_USER=your_email
-   EMAIL_PASS=your_email_password
-   ```
-
-### Running the Project
-
-- **Start Backend**: 
-  ```bash
-  cd backend
-  npm run dev
-  ```
-- **Start Frontend**: 
-  ```bash
-  cd frontend
-  npm run dev
-  ```
-
----
-
-## 📁 Project Structure
+LearnFlex follows a decoupled 3-tier client-server architecture, augmented with an asynchronous real-time/event-driven layer:
 
 ```text
-Learn_Flex/
-├── backend/            # Express server & API routes
-│   ├── controllers/    # Business logic
-│   ├── routes/         # API endpoints
-│   ├── socket/         # Real-time event handlers
-│   └── util/           # Database connections & helpers
-├── frontend/           # React application
-│   ├── src/
-│   │   ├── components/ # Reusable UI components
-│   │   ├── Pages/      # Main layout views
-│   │   └── config.js   # API configurations
-└── README.md           # You are here!
+┌─────────────────────────────────────────────────────────┐
+│ TIER 1: Presentation Layer (Frontend SPA)               │
+│ React 19 · Vite 7 · Tailwind CSS 4 · React Router 7     │
+│ Socket.io-client (1v1 Battle) · Activity Heatmap        │
+└─────────────────────────────────────────────────────────┘
+
+                    │ HTTPS (JWT HttpOnly) │ WebSockets
+                    ▼                     ▼
+
+┌─────────────────────────────────────────────────────────┐
+│ TIER 2: Application & Real-Time Engine                  │
+│ Node.js · Express 5 · JWT Auth · Sliding-Window Rate    │
+│ Limiter · Socket.io Server · node-cron (Daily LCG Gen)  │
+└─────────────────────────────────────────────────────────┘
+
+        │ postgres.js (tagged SQL)   │ Static CDN
+        ▼                            ▼
+
+┌────────────────────────────┐  ┌───────────────────────┐
+│ TIER 3A: Relational Store  │  │ TIER 3B: Object Store │
+│ PostgreSQL on Neon         │  │ Cloudinary / CDN      │
+│ Serverless — 15+ tables    │  │ Diagrams & figures    │
+└────────────────────────────┘  └───────────────────────┘
 ```
 
----
+## 🧰 Tech Stack
 
-## 📄 License
+| Layer           | Technology                                                                               |
+| --------------- | ---------------------------------------------------------------------------------------- |
+| Frontend        | React 19, Vite 7, Tailwind CSS 4, React Router 7, Socket.io-client                       |
+| Backend         | Node.js (v18+), Express 5                                                                |
+| Database        | PostgreSQL (Neon Serverless) via `postgres.js` with connection pooling                   |
+| Real-time       | Socket.io (1v1 battle engine)                                                            |
+| Scheduling      | node-cron (midnight `Asia/Kolkata` daily challenge generation)                           |
+| Auth & Security | JWT + HttpOnly cookies, BCrypt (Blowfish-based hashing), SQL sliding-window rate limiter |
+| Email           | Nodemailer (OTP delivery)                                                                |
+| Object Storage  | Cloudinary / CDN (question diagrams, circuits, formulas)                                 |
 
-This project is licensed under the **ISC License**.
+## 🗄️ Database Design
 
----
+* **15+ relational tables** covering `User`, `User_Profile`, `Exam`, `Subject`, `Exam_Marking`, `Questions`, `Weekly_Test` (+ bridge table), `DailyChallenge` (+ bridge table), submission/answer header-detail tables, and audit/logging tables (`OTPRateLimit`, `submission_log`).
 
-*Built with ❤️ by the Learn Flex Team.*
+* Normalized to **3NF/BCNF**, with deliberate, documented denormalization in `User_Profile` (`total_solved`, `rating`) for O(1) dashboard reads.
+
+* All multi-row writes (quiz/practice submissions) are wrapped in PostgreSQL transactions (`sql.begin(...)`) for full ACID guarantees.
+
+* Leaderboards and analytics are computed with CTEs, conditional aggregation, and window ranking functions rather than application-level loops.
+
+## 🔑 Core Algorithms
+
+* **Daily Challenge Generation (LCG):** `X(n+1) = (a·X(n) + c) mod m`, seeded from the date, exam, and subject — deterministic and storage-free.
+
+* **Practice Deduplication:** `DISTINCT ON` combined with regex-normalized question text (`REGEXP_REPLACE`) to catch near-duplicate scraped questions.
+
+* **Answer Normalization:** Strips formatting noise (spacing, parentheses, casing) and falls back to numeric equivalence checks before grading.
+
+* **Sliding-Window Rate Limiting:** Rolling 1-hour window over an `OTPRateLimit` table (rather than fixed-window buckets) to prevent OTP spam/enumeration.
+
+## 🔒 Security
+
+* Passwords hashed with BCrypt (Blowfish cipher, salted, configurable work factor).
+
+* JWTs issued and stored in `HttpOnly`, `Secure`, `SameSite=None` cookies — inaccessible to client-side JS, mitigating XSS-based token theft.
+
+* Parameterized queries via `postgres.js` tagged templates — SQL injection-safe by design.
+
+* Database-backed sliding-window rate limiting on OTP/password-reset endpoints.
+
+## 🔌 Real-Time 1v1 Battle Flow
+
+1. Client connects to `/1v1` and emits `find_match` with an `exam_id`.
+
+2. Server matches two players from an in-memory queue and creates a room (`room_${uuidv4()}`).
+
+3. 10 random questions for the exam are fetched and broadcast via `match_found`.
+
+4. Players submit answers; once both results are in, the server emits the final comparative result to both.
+
+5. Disconnects are handled gracefully — the queue/room is cleaned up and the remaining player is notified via `opponent_left`.
+
+## 🚀 Scalability Notes
+
+* Built on Neon's serverless Postgres (storage/compute separation, scale-to-zero) with pooled connections via `postgres.js` to avoid exhausting `max_connections` in ephemeral environments.
+
+* Roadmap: Redis caching for leaderboards, `@socket.io/redis-adapter` for horizontal WebSocket scaling, and a message queue (Kafka/SQS) to smooth write spikes during mass mock tests.
